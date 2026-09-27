@@ -1,0 +1,26 @@
+name: CI
+
+# Runs on every push and every pull request.
+on:
+  push:
+  pull_request:
+
+jobs:
+  synth:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Get the code
+      - uses: actions/checkout@v4
+
+      # 2. Install Node.js
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      # 3. Install exact dependency versions from package-lock.json
+      - run: npm ci
+
+      # 4. Type-check + synthesize. cdk-nag runs during synth:
+      #    any Well-Architected violation fails this step, and the build goes red.
+      - run: npx cdk synth
